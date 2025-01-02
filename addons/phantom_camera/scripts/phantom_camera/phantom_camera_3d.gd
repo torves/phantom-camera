@@ -1005,8 +1005,10 @@ func _interpolate_position(target_position: Vector3, delta: float, camera_target
 
 
 func _interpolate_rotation(target_trans: Vector3, delta: float) -> void:
-	var direction: Vector3 = (target_trans - global_position + look_at_offset).normalized()
-	var target_basis: Basis = Basis().looking_at(direction)
+	# Use Godot Camera's position instead of the PCam position so it still tracks the target while tweening.
+	var camera_global_position: Vector3 = pcam_host_owner.camera_3d.global_position
+	var direction: Vector3 = (target_trans - camera_global_position + look_at_offset).normalized()
+	var target_basis: Basis = Basis.looking_at(direction)
 	var target_quat: Quaternion = target_basis.get_rotation_quaternion().normalized()
 	if look_at_damping:
 		var current_quat: Quaternion = quaternion.normalized()
